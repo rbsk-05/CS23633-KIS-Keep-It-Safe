@@ -14,8 +14,9 @@
 - **Copy to Clipboard**: Seamless 1-click password copying.
 - **Show/Hide Credentials**: Toggle password visibility securely.
 - **SaaS Inspired UI/UX**: Clean Light and Dark modes adorned with luxurious Gold accents.
+- **Serverless AWS Architecture**: Infinite scalability and zero-idle costs using AWS Lambda and DynamoDB.
 - **AWS Hosted UI Integration**: Robust authentication natively handled through Amazon Cognito without manual token entry.
-- **Encrypted Backend**: Enterprise-grade infrastructure ensuring your vault remains impenetrable.
+- **Zero-Knowledge Encrypted Backend**: Enterprise-grade infrastructure ensuring your vault remains mathematically impenetrable.
 
 ---
 
@@ -23,13 +24,14 @@
 
 1. **Authentication:** The user logs in via the robust Amazon Cognito Hosted UI.
 2. **Token Exchange:** Upon successful login, the application securely retrieves and validates the JWT `access_token` and `id_token` in the background.
-3. **Data Retrieval:** The Dashboard securely calls the AWS API Gateway to fetch your personalized, encrypted password vault from DynamoDB.
-4. **CRUD Operations:** Users can Create, Read, Update, or Delete passwords. Every operation passes through API Gateway to AWS Lambda functions, which process the encrypted data and apply changes directly to the database.
-5. **Session Management:** Built-in Axios interceptors continuously monitor token validity, triggering a graceful, automatic logout if a `401 Unauthorized` token expiration occurs.
+3. **Data Retrieval:** The React Dashboard securely calls an Amazon API Gateway endpoint to fetch your personalized password vault.
+4. **Serverless Execution:** Every CRUD operation (Create, Read, Update, Delete) routes through API Gateway to trigger an ephemeral AWS Lambda function. The Lambda container executes the logic, communicates with Amazon DynamoDB, and terminates instantly.
+5. **Zero-Knowledge Encryption:** Before any sensitive data is written to DynamoDB, Lambda invokes AWS KMS to perform Envelope Encryption, guaranteeing that plain-text passwords never touch the database.
+6. **Session Management:** Built-in Axios interceptors continuously monitor token validity, triggering a graceful, automatic logout if a `401 Unauthorized` token expiration occurs.
 
 ---
 
-## Tech Stack & Cloud Infrastructure
+## Tech Stack & Serverless Cloud Infrastructure
 
 ### Frontend
 - **Framework:** React.js (Bootstrapped with Vite)
@@ -39,32 +41,34 @@
 - **HTTP Client:** Axios (Interceptors for Bearer token injection)
 
 ### AWS Cloud Services
-The application relies on advanced Amazon Web Services (AWS) to ensure secure storage, scalability, and reliable operations:
-- **Amazon S3:** Securely stores encrypted password backups and user data files.
-- **Amazon DynamoDB:** NoSQL database storing user credentials and metadata in a highly scalable and fast manner.
-- **AWS EC2 / Elastic Beanstalk:** Hosts the backend application layers and handles high-throughput API requests.
-- **AWS KMS (Key Management Service):** Manages encryption keys, ensuring sensitive vault data is cryptographically secure.
-- **AWS IAM (Identity and Access Management):** Controls granular access and permissions for all internal AWS resources to maintain isolated security.
-- **Amazon CloudWatch:** Monitors application performance, detailed logs, and system health activity.
+The application relies on an advanced, strictly **Serverless** Amazon Web Services (AWS) architecture. There are **no EC2 instances** or traditional servers used in this project:
+- **Amazon S3:** Securely hosts the static, optimized React frontend files.
+- **Amazon API Gateway:** Acts as the highly scalable "front door" for all backend API requests, routing them securely to Lambda.
+- **AWS Lambda:** Provides event-driven, stateless compute power to execute backend CRUD logic, scaling automatically from zero to thousands of concurrent executions.
+- **Amazon DynamoDB:** A highly scalable NoSQL database utilizing Single-Table Design to store encrypted user vaults with single-digit millisecond latency.
+- **Amazon Cognito:** Manages the User Pool and Hosted UI for secure, robust identity verification and JWT issuance.
+- **AWS KMS (Key Management Service):** Manages the Customer Master Keys (CMKs) used for Envelope Encryption, ensuring data is mathematically secure at rest.
+- **AWS IAM (Identity and Access Management):** Enforces strict, least-privilege role-based access control (RBAC) between services.
+- **Amazon CloudWatch:** Monitors application performance, logs Lambda executions, and tracks system health.
 
 ---
 
 ## Security Considerations
 
-Security is at the heart of KIS:
-- **Zero-Knowledge Architecture:** The frontend never exposes hardcoded tokens; everything routes securely through Cognito.
-- **In-transit Encryption:** All HTTP traffic is forced over TLS/SSL (HTTPS) ensuring data cannot be intercepted.
-- **At-rest Encryption:** All sensitive data is encrypted before being written to DynamoDB or S3 using AWS KMS.
-- **Strict IAM Policies:** IAM ensures heavily restricted, least-privilege controlled access between AWS services.
+Security is the core foundation of KIS:
+- **Zero-Knowledge Architecture:** Plain-text passwords are never sent to the database. They are encrypted within Lambda via AWS KMS before storage.
+- **No Monolithic Servers:** By eliminating EC2 instances, we eliminate the risk of OS-level vulnerabilities, SSH exploits, and localized server hacking.
+- **In-transit Encryption:** All HTTP traffic is forced over TLS/SSL (HTTPS) ensuring data cannot be intercepted via Man-in-the-Middle attacks.
+- **Cognito JWT Validation:** Tokens are strictly validated at the edge by API Gateway before Lambda is ever invoked.
 
 ---
 
 ## Installation Instructions
 
 ### Prerequisites
-- Node.js (v16.0 or higher)
+- Node.js (v18.0 or higher)
 - NPM or Yarn
-- Valid AWS Cognito Client ID & Domain (Set up in `AuthContext.jsx`)
+- Valid AWS Cognito Client ID, Cognito Domain, and API Gateway URL.
 
 ### Local Setup
 1. Clone the repository:
@@ -78,12 +82,19 @@ Security is at the heart of KIS:
    npm install
    ```
 
-3. Start the development server:
+3. Create a `.env` file in the root directory and add your AWS credentials:
+   ```env
+   VITE_COGNITO_CLIENT_ID=your_client_id
+   VITE_COGNITO_DOMAIN=your_cognito_domain
+   VITE_API_GATEWAY_URL=your_api_url
+   ```
+
+4. Start the development server:
    ```bash
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`.
+5. Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
@@ -101,7 +112,7 @@ Security is at the heart of KIS:
 
 ```text
 KIS-Keep-It-Simple/
-├── public/                 # Static public assets
+├── public/                 # Static public assets (design diagram)
 ├── src/
 │   ├── components/
 │   │   ├── layout/         # Persistent UI structures (Navbar, Layout wrappers)
@@ -112,6 +123,8 @@ KIS-Keep-It-Simple/
 │   ├── App.jsx             # React Router definitions and route protection
 │   ├── index.css           # Global reset and thematic CSS variables
 │   └── main.jsx            # Entry point bridging Context Providers
+├── terraform/              # Infrastructure-as-Code definitions (main.tf, etc.)
+├── Report-&-Certificate/   # Project report generation tools and docs
 ├── index.html              # Core HTML template
 ├── package.json            # Deployment scripts & dependencies
 ├── vite.config.js          # Vite build configurations
@@ -122,7 +135,7 @@ KIS-Keep-It-Simple/
 
 ## Future Improvements
 
-- [ ] Implement robust multi-factor authentication (MFA).
+- [ ] Implement robust multi-factor authentication (MFA) via AWS Cognito.
 - [ ] Add a secure password generator tool within the Add/Edit form.
 - [ ] Incorporate vault synchronization across multiple devices via WebSockets.
 - [ ] Perform detailed security audits and potential SOC2 compliance alignments.
