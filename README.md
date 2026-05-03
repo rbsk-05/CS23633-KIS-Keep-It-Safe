@@ -2,11 +2,13 @@
 
 **KIS (Keep It Safe)** is a premium, modern, and highly secure Personal Password Manager. Built with the philosophy of minimal design and robust security, KIS allows you to seamlessly store, manage, and update your sensitive credentials with absolute peace of mind.
 
+## System Design
+
 <p align="center">
   <img src="public/design.png" width="700"/>
 </p>
 
-## 🌟 Key Features
+## Key Features
 
 - **Store & Manage Passwords**: Securely add, view, update, and delete credentials.
 - **Copy to Clipboard**: Seamless 1-click password copying.
@@ -17,7 +19,7 @@
 
 ---
 
-## 🏗️ How It Works
+## How It Works
 
 1. **Authentication:** The user logs in via the robust Amazon Cognito Hosted UI.
 2. **Token Exchange:** Upon successful login, the application securely retrieves and validates the JWT `access_token` and `id_token` in the background.
@@ -27,7 +29,7 @@
 
 ---
 
-## 🛠️ Tech Stack & Cloud Infrastructure
+## Tech Stack & Cloud Infrastructure
 
 ### Frontend
 - **Framework:** React.js (Bootstrapped with Vite)
@@ -47,7 +49,7 @@ The application relies on advanced Amazon Web Services (AWS) to ensure secure st
 
 ---
 
-## 🛡️ Security Considerations
+## Security Considerations
 
 Security is at the heart of KIS:
 - **Zero-Knowledge Architecture:** The frontend never exposes hardcoded tokens; everything routes securely through Cognito.
@@ -57,7 +59,7 @@ Security is at the heart of KIS:
 
 ---
 
-## 🚀 Installation Instructions
+## Installation Instructions
 
 ### Prerequisites
 - Node.js (v16.0 or higher)
@@ -85,7 +87,7 @@ Security is at the heart of KIS:
 
 ---
 
-## 📘 Usage Guide
+## Usage Guide
 
 1. **Login:** Click "Login with AWS Cognito". You will be safely redirected to the AWS Hosted UI.
 2. **Dashboard:** Once authenticated, you will see your vault. Toggle Light/Dark mode using the top-right navigation icon.
@@ -95,7 +97,7 @@ Security is at the heart of KIS:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 KIS-Keep-It-Simple/
@@ -118,7 +120,7 @@ KIS-Keep-It-Simple/
 
 ---
 
-## ✨ Future Improvements
+## Future Improvements
 
 - [ ] Implement robust multi-factor authentication (MFA).
 - [ ] Add a secure password generator tool within the Add/Edit form.
