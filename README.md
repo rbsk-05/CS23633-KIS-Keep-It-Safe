@@ -2,6 +2,10 @@
 
 **KIS (Keep It Safe)** is a premium, modern, and highly secure Personal Password Manager. Built with the philosophy of minimal design and robust security, KIS allows you to seamlessly store, manage, and update your sensitive credentials with absolute peace of mind.
 
+<p align="center">
+  <img src="public/design.png" width="700"/>
+</p>
+
 ## 🌟 Key Features
 
 - **Store & Manage Passwords**: Securely add, view, update, and delete credentials.
